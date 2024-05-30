@@ -8,7 +8,7 @@ body {
 
 }
 .game-container{
-    width: 75%;
+    width: 85%;
     height: 40rem;
     background-color: aliceblue;
     margin: auto;
@@ -33,13 +33,14 @@ body {
 .word-draw-container{
     height: 60%;
     width: 100%;
+    display: flex;
+    gap: 1rem;
 }
 .Guessed-word{
-    width: 50%;
+    width: 30%;
     height: 100%;
     display: flex;
     gap: 1rem;
-
     justify-content: center;
     align-items: center;
 }
@@ -57,8 +58,6 @@ body {
     font-family: 'Courier New', Courier, monospace;
     
 }
-
-
 
 
 
@@ -89,14 +88,125 @@ body {
 }
 
 
+
 /*     Game Setting            */
 .pressed{
     opacity: 0.3;
     animation: pressAnimation 0.4s forwards;
 }
 
+/* Hang man drawing*/
 
-/*     Game Setting            */
+
+.hangman-container{
+    width: 55%;
+    height: 100%;
+    position: relative;
+    
+
+}
+
+.gallows .pole, .gallows .beam, .gallows .rope, .gallows .head, .gallows .body, .gallows .left-arm, .gallows .right-arm, .gallows .left-leg, .gallows .right-leg {
+    position: relative;
+    background-color: #000;
+}
+.gallows .rope, .gallows .head, .gallows .body, .gallows .left-arm, .gallows .right-arm, .gallows .left-leg, .gallows .right-leg{
+    display: none;
+}
+
+.gallows .pole {
+    width: 10px;
+    height: 20rem;
+    float: right;
+    border-radius: 1px;
+}
+
+.gallows .beam {
+    width: 150px;
+    height: 8px;
+    float: right;
+    top: 0;
+    border-radius: 1px;
+}
+
+.gallows .rope {
+    width: 3px;
+    height: 5rem;
+    float: right;
+    top: 0rem;
+}
+
+.gallows .head {
+    width: 50px;
+    height: 50px;   
+    border-radius: 50%;
+    float: right;
+    top: 5rem;
+    left: 1.5rem;
+    background-color: transparent;
+    border: 3px solid #000;
+}
+
+.gallows .body {
+    width: 10px;
+    height: 80px;
+    float: right;
+    top: 8.5rem;
+    left: 3.6rem;
+}
+
+.gallows .left-arm, .gallows .right-arm {
+    width: 65px;
+    height: 5px;
+    border-radius: 2px;
+}
+
+.gallows .left-arm {
+    transform: rotate(-45deg);
+    left: 4rem;
+    float: right;
+    top: 10rem;
+}
+
+.gallows .right-arm {
+    transform: rotate(45deg);
+    left: 12rem;
+    float: right;
+    top: 10rem;}
+
+.gallows .left-leg, .gallows .right-leg {
+    width: 60px;
+    height: 6px;
+    
+}
+
+.gallows .left-leg {
+    transform: rotate(130deg);
+    left: 12.5rem;
+    top: 14.5rem;
+    float: right;
+}
+
+.gallows .right-leg {
+    transform: rotate(-130deg);
+    left: 19rem;
+    top: 14.5rem;
+    float: right;
+}
+.bot-beam{
+    width: 19rem;
+    height: 0.4rem;
+    border-radius: 5px;
+    background-color: black;
+    top: 20rem;
+    left: 45rem;
+    position: relative;
+}
+
+
+
+
+/*     Key frames            */
 
 @keyframes pressAnimation {
     0% {

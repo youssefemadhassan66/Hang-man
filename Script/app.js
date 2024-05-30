@@ -1,4 +1,3 @@
-
 const words = {
     Animals: [
         "lion",
@@ -38,116 +37,133 @@ const words = {
     ]
 };
 
-//Variables //
+let hangManParts = ['.rope', '.head', '.body', '.left-arm', '.right-arm', ".left-leg", ".right-leg"];
 
-let Guessed_letters_array = [];
+// Variables
+let remainingGuesses;
+let guessedLettersArray;
+let word;
+let wordLength;
 
-let Guessed_wrong_letters_array =[];
+// Query selectors
+let wordContainer = document.querySelector(".Guessed-word");
+let characters = document.querySelectorAll(".key");
 
-let category = 0;
-
-let remaining_guesses = 6;
-
-let word = Generate_random_word(category);
-
-let word_length = word.length;
-
-// Query selectors // 
-
-let word_container =document.querySelector(".Guessed-word");
-
-let numberGuessesLeft = document.querySelector(".number-guesses-left").innerHTML = 
-`<span> Number of guesses left  ${remaining_guesses} </span>`;
-
-
-
-
-// Functions // 
-
-
-function Generate_random_number(Number){
+// Functions
+function Generate_random_number(Number) {
     return Math.floor(Math.random() * Number);
 }
 
-
-function Generate_random_word(Categories){
-
-    //gets the keys of word object // 
+function Generate_random_word(Categories) {
     var keys = Object.keys(words);
+    var category = keys[Categories];
+    var selectedCategory = words[category];
+    var randWord = selectedCategory[Generate_random_number(selectedCategory.length)];
+    return randWord;
+}
 
-    var category = keys[Categories]; 
-    
-    var Selected_category = words[category];
-    
-    var  Rand_word = Selected_category[Generate_random_number(Selected_category.length)];
-    
-    return Rand_word;    
-}   
+function attachEventListeners() {
+    characters.forEach(character => {
+        const handleClick = function () {
+            character.classList.add("pressed");
+            character.removeEventListener('click', handleClick);
+            Guess(character.textContent, wordLength);
+        };
+        character.addEventListener('click', handleClick);
+    });
+}
 
+function Start_game() {
+    resetGame();
+
+    let category = 1;
+    remainingGuesses = 7;
+    guessedLettersArray = [];
+    word = Generate_random_word(category);
+    wordLength = word.length;
+    Create_dashes(wordLength);
+    attachEventListeners();
+}
+
+function Create_dashes(Word_length) {
+    wordContainer.innerHTML = ''; // Clear previous dashes
+    for (let i = 0; i < Word_length; i++) {
+        const dash = document.createElement("span");
+        dash.textContent = "_";
+        wordContainer.appendChild(dash).classList.add("char");
+    }
+}
+
+function Guess(letter, wordLength) {
+    letter = letter.toLowerCase();
+    if (checker_character(letter, word, wordLength)) {
+        var audio = new Audio('../Sounds/mixkit-correct-answer-tone-2870.wav');
+        audio.play();
+        guessedLettersArray.push(letter);
+        reveal_character(guessedLettersArray, word, wordLength);
+        Checker_win_lose();
+    } else {
+        remainingGuesses -= 1;
+        reveal_hangman(remainingGuesses);
+        var audio = new Audio('../Sounds/error-4-199275.mp3');
+        audio.play();
+        Checker_win_lose();
+    }
+}
+
+function checker_character(char, word, wordLength) {
+    for (let i = 0; i < wordLength; i++) {
+        if (word[i] === char) {
+            return true;
+        }
+    }
+    return false;
+}
+
+function reveal_character(guessedArray, word, wordLength) {
+    for (let i = 0; i < wordLength; i++) {
+        if (guessedArray.includes(word[i])) {
+            document.querySelectorAll(".char")[i].textContent = word[i];
+        }
+    }
+}
+
+function reveal_hangman(remainingGuesses) {
+    let partIndex = (remainingGuesses - 6) * -1;
+    if (partIndex < hangManParts.length) {
+        document.querySelector(hangManParts[partIndex]).style.display = 'block';
+    }
+}
+
+function Checker_win_lose() {
+    if (guessedLettersArray.length === wordLength) {
+        resetGame();
+        Start_game();
+        var audio = new Audio('../Sounds/wrong-answer-129254.mp3');
+        audio.play();
+    }
+    if (remainingGuesses === 0) {
+    
+        alert("Try again, You lost the game");
+        resetGame();
+        Start_game();
+        var audio = new Audio('../Sounds/game-over-arcade-6435.mp3');
+        audio.play();
+    }
+}
+
+function resetGame() {
+    remainingGuesses = 7; 
+    guessedLettersArray = []; 
+    hangManParts.forEach(part => {
+        document.querySelector(part).style.display = 'none';
+    });
+    characters.forEach(character => {
+        character.classList.remove("pressed");
+    });
+    wordContainer.innerHTML = ''; 
+}
 
 document.addEventListener('DOMContentLoaded', (event) => {
-
-  
-
-    function Create_dashes(Word_length){
-    
-        for (let i = 0; i < Word_length; i++) {
-            const dash = document.createElement("span");
-            dash.textContent = "_";
-            word_container.appendChild(dash).classList.add("char");
-        }
-    
-    }
-
-    function Pressed(){
-        let Characters = document.querySelectorAll(".key");
-        Characters.forEach(Character => {
-            const handleClick = function() {
-                Character.classList.add("pressed");
-                Character.removeEventListener('click', handleClick);
-                Guess(Character.textContent);
-            };
-            Character.addEventListener('click', handleClick);
-        });
-    }
-    
-    function Guess(letter){
-
-
-         letter = letter.toLowerCase();
-    
-        if(checker(letter)){
-            
-        Guessed_letters_array.push(letter);
-        revel_character(Guessed_letters_array);
-
-        }
-    
-    }
-    
-    function checker(char){
-        for(let i = 0; i < word_length;i++){
-            if(word[i] === char){
-                return true;
-            }
-        }
-        return false;
-        }
-    function revel_character(guessed_array){ 
-        for(let i=0 ; i < word_length; i++){
-                if(guessed_array.includes(word[i])){
-                    document.querySelectorAll(".char")[i].textContent = word[i];
-            }
-
-        }
-    }
-
-
-    Pressed();
-    Create_dashes(word_length);
-  
-
-
+    Start_game();
 });
-
-
