@@ -44,7 +44,7 @@ let remainingGuesses;
 let guessedLettersArray;
 let word;
 let wordLength;
-
+let guessed_counter;
 // Query selectors
 let wordContainer = document.querySelector(".Guessed-word");
 let characters = document.querySelectorAll(".key");
@@ -64,6 +64,13 @@ function Generate_random_word(Categories) {
 
 function attachEventListeners() {
     characters.forEach(character => {
+        // Remove any existing event listeners before adding a new one
+        character.replaceWith(character.cloneNode(true));
+    });
+
+    characters = document.querySelectorAll(".key"); // Re-query the elements to attach fresh event listeners
+
+    characters.forEach(character => {
         const handleClick = function () {
             character.classList.add("pressed");
             character.removeEventListener('click', handleClick);
@@ -75,8 +82,8 @@ function attachEventListeners() {
 
 function Start_game() {
     resetGame();
-
     let category = 1;
+    guessed_counter = 0;
     remainingGuesses = 7;
     guessedLettersArray = [];
     word = Generate_random_word(category);
@@ -96,11 +103,14 @@ function Create_dashes(Word_length) {
 
 function Guess(letter, wordLength) {
     letter = letter.toLowerCase();
+    console.log(word);
     if (checker_character(letter, word, wordLength)) {
         var audio = new Audio('../Sounds/mixkit-correct-answer-tone-2870.wav');
         audio.play();
-        guessedLettersArray.push(letter);
-        reveal_character(guessedLettersArray, word, wordLength);
+        if (!guessedLettersArray.includes(letter)) {
+            guessedLettersArray.push(letter);
+            reveal_character(letter, word);
+        }
         Checker_win_lose();
     } else {
         remainingGuesses -= 1;
@@ -111,21 +121,20 @@ function Guess(letter, wordLength) {
     }
 }
 
-function checker_character(char, word, wordLength) {
-    for (let i = 0; i < wordLength; i++) {
-        if (word[i] === char) {
-            return true;
-        }
-    }
-    return false;
+function checker_character(char, word) {
+    return word.includes(char);
 }
 
-function reveal_character(guessedArray, word, wordLength) {
-    for (let i = 0; i < wordLength; i++) {
-        if (guessedArray.includes(word[i])) {
-            document.querySelectorAll(".char")[i].textContent = word[i];
+function reveal_character(letter, word) {
+    let newCorrectGuess = false;
+    for (let i = 0; i < word.length; i++) {
+        if (word[i] === letter && document.querySelectorAll(".char")[i].textContent === "_") {
+            document.querySelectorAll(".char")[i].textContent = letter;
+            guessed_counter++;
+            newCorrectGuess = true;
         }
     }
+    return newCorrectGuess;
 }
 
 function reveal_hangman(remainingGuesses) {
@@ -136,32 +145,32 @@ function reveal_hangman(remainingGuesses) {
 }
 
 function Checker_win_lose() {
-    if (guessedLettersArray.length === wordLength) {
-        resetGame();
-        Start_game();
+    if (guessed_counter === wordLength) {
         var audio = new Audio('../Sounds/wrong-answer-129254.mp3');
         audio.play();
-    }
-    if (remainingGuesses === 0) {
-    
+        alert("Congratulations, you won!");
+        resetGame();
+        Start_game();
+    } else if (remainingGuesses === 0) {
+        var audio = new Audio('../Sounds/game-over-arcade-6435.mp3');
+        audio.play();
         alert("Try again, You lost the game");
         resetGame();
         Start_game();
-        var audio = new Audio('../Sounds/game-over-arcade-6435.mp3');
-        audio.play();
     }
 }
 
 function resetGame() {
-    remainingGuesses = 7; 
-    guessedLettersArray = []; 
+    remainingGuesses = 7;
+    guessedLettersArray = [];
+    guessed_counter = 0;
     hangManParts.forEach(part => {
         document.querySelector(part).style.display = 'none';
     });
     characters.forEach(character => {
         character.classList.remove("pressed");
     });
-    wordContainer.innerHTML = ''; 
+    wordContainer.innerHTML = '';
 }
 
 document.addEventListener('DOMContentLoaded', (event) => {
