@@ -62,6 +62,3 @@ The game uses the following audio files for feedback:
 ../Sounds/game-over-arcade-6435.mp3: Played when the player loses.
 Contribution
 Feel free to open issues or submit pull requests if you have any improvements or bug fixes.
-
-License
-This project is licensed under the MIT License. See the LICENSE file for more details.
