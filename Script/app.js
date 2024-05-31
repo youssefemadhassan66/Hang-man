@@ -176,3 +176,4 @@ function resetGame() {
 document.addEventListener('DOMContentLoaded', (event) => {
     Start_game();
 });
+z
