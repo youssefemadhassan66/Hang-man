@@ -1,95 +1,88 @@
 const words = {
-    Animals: [
-        "lion",
-        "tiger",
-        "elephant",
-        "giraffe",
-        "zebra",
-        "kangaroo",
-        "panda",
-        "alligator",
-        "dolphin",
-        "penguin"
-    ],
-    Fruits: [
-        "apple",
-        "banana",
-        "cherry",
-        "date",
-        "fig",
-        "grape",
-        "kiwi",
-        "lemon",
-        "mango",
-        "orange"
-    ],
-    Countries: [
-        "argentina",
-        "brazil",
-        "canada",
-        "denmark",
-        "egypt",
-        "finland",
-        "germany",
-        "hungary",
-        "india",
-        "japan"
-    ]
+    Animals: ["lion", "tiger", "elephant", "giraffe", "zebra", "kangaroo", "panda", "alligator", "dolphin", "penguin"],
+    Fruits: ["apple", "banana", "cherry", "date", "fig", "grape", "kiwi", "lemon", "mango", "orange"],
+    Countries: ["argentina", "brazil", "canada", "denmark", "egypt", "finland", "germany", "hungary", "india", "japan"]
 };
 
 let hangManParts = ['.rope', '.head', '.body', '.left-arm', '.right-arm', ".left-leg", ".right-leg"];
-
-// Variables
+let gameArray = ['.word-draw-container','.number-guesses-left','.character-container'];
+let selectedCategory = null;
 let remainingGuesses;
 let guessedLettersArray;
 let word;
 let wordLength;
 let guessed_counter;
-// Query selectors
+let gameStarted = false; // Flag to check if the game has started
+
 let wordContainer = document.querySelector(".Guessed-word");
 let characters = document.querySelectorAll(".key");
 
-// Functions
 function Generate_random_number(Number) {
     return Math.floor(Math.random() * Number);
 }
 
-function Generate_random_word(Categories) {
-    var keys = Object.keys(words);
-    var category = keys[Categories];
-    var selectedCategory = words[category];
-    var randWord = selectedCategory[Generate_random_number(selectedCategory.length)];
+function Generate_random_word(categoryIndex) {
+    let keys = Object.keys(words);
+    let category = keys[categoryIndex];
+    let selectedCategory = words[category];
+    let randWord = selectedCategory[Generate_random_number(selectedCategory.length)];
     return randWord;
 }
 
 function attachEventListeners() {
     characters.forEach(character => {
-        // Remove any existing event listeners before adding a new one
         character.replaceWith(character.cloneNode(true));
     });
 
-    characters = document.querySelectorAll(".key"); // Re-query the elements to attach fresh event listeners
-
+    characters = document.querySelectorAll(".key");
     characters.forEach(character => {
         const handleClick = function () {
-            character.classList.add("pressed");
-            character.removeEventListener('click', handleClick);
-            Guess(character.textContent, wordLength);
+            if (gameStarted) { // Check if the game has started before allowing guesses
+                character.classList.add("pressed");
+                character.removeEventListener('click', handleClick);
+                Guess(character.textContent, wordLength);
+            }
         };
         character.addEventListener('click', handleClick);
     });
 }
+function game_revel(){
+    for(let i =0 ; i < gameArray.length;i++){
+        $(gameArray[i]).fadeIn(3000).css('display', 'flex');
+    }
+
+}
+
+function select_category() {
+    let categories = document.querySelectorAll(".category-btn");
+    categories.forEach(category => {
+        category.addEventListener('click', function () {
+            selectedCategory = category.value;
+            Start_game();
+
+        });
+    });
+}
+
+select_category();
+
+
 
 function Start_game() {
+    if (selectedCategory === null) {
+        alert("Please select a category first!");
+        return;
+    }
     resetGame();
-    let category = 1;
+    game_revel();
     guessed_counter = 0;
     remainingGuesses = 7;
     guessedLettersArray = [];
-    word = Generate_random_word(category);
+    word = Generate_random_word(selectedCategory);
     wordLength = word.length;
     Create_dashes(wordLength);
     attachEventListeners();
+    gameStarted = true; 
 }
 
 function Create_dashes(Word_length) {
@@ -113,6 +106,7 @@ function Guess(letter, wordLength) {
         }
         Checker_win_lose();
     } else {
+        document.querySelector(".number-guesses-left").innerHTML = `<span>Number of Guesses left = ${remainingGuesses - 1}</span>`;
         remainingGuesses -= 1;
         reveal_hangman(remainingGuesses);
         var audio = new Audio('../Sounds/error-4-199275.mp3');
@@ -150,13 +144,11 @@ function Checker_win_lose() {
         audio.play();
         alert("Congratulations, you won!");
         resetGame();
-        Start_game();
     } else if (remainingGuesses === 0) {
         var audio = new Audio('../Sounds/game-over-arcade-6435.mp3');
         audio.play();
         alert("Try again, You lost the game");
         resetGame();
-        Start_game();
     }
 }
 
@@ -170,10 +162,13 @@ function resetGame() {
     characters.forEach(character => {
         character.classList.remove("pressed");
     });
+    gameArray.forEach(index =>{
+        document.querySelector(index).style.display = 'none';
+    })
     wordContainer.innerHTML = '';
+    gameStarted = false; 
 }
 
 document.addEventListener('DOMContentLoaded', (event) => {
-    Start_game();
+    
 });
-z

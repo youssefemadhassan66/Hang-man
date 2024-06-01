@@ -9,7 +9,7 @@ body {
 }
 .game-container{
     width: 85%;
-    height: 63%;
+    height: 70%;
     background-color: rgb(18, 23, 28);
     margin: auto;
     border-radius: 15px;
@@ -22,16 +22,35 @@ body {
     z-index: 0;
     padding: 5rem;
 }
-#think-img{
-    position: absolute;
-    left: 92%;
-    top: 40%;
-    transform: translate(-50%, -50%);
-    width: 18%;
-    z-index: 1;
+
+.category{
+    width: 85%;
+    height: 10%;
+    display: flex;
+    justify-content: space-around;
 }
+.category-btn{
+    width: 10rem;
+    height: 2.5rem;
+    padding: 1rem;
+    border-radius: 6px;
+    border: solid #00b585 1px;
+    color: #00b585;
+    background-color: transparent;  
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 1s ease;
+}
+.category-btn:hover{
+    transform: scale(1.1);
+    box-shadow: #00b5857c 0px 5px 15px;
+
+}
+
 .word-draw-container{
-    height: 60%;
+    height: 50%;
     width: 100%;
     display: flex;
     gap: 1rem;
@@ -53,9 +72,12 @@ body {
     width: 100%;
     height: 8%;
     text-align: center;
-    color:  rgb(182, 3, 3);
+    color:  rgb(182, 3, 60);
     font-size: large;
     font-weight: 700;
+    display: flex;
+    justify-content: center;
+    
     font-family: 'Courier New', Courier, monospace;
     
 }
@@ -211,6 +233,9 @@ body {
 .pressed{
     opacity: 0.3;
     animation: pressAnimation 0.4s forwards;
+}
+.character-container , .word-draw-container , .number-guesses-left{
+display: none;
 }
 
 /* Key frames*/
